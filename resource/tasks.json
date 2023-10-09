@@ -601,6 +601,10 @@
             [
                 ":",
                 ""
+            ],
+            [
+                "-2O",
+                "-20"
             ]
         ],
         "roi": [
@@ -3306,6 +3310,48 @@
             "StartUpConnectingFlag@LoadingIcon"
         ]
     },
+	"StartAtHome": {
+		"baseTask": "Home",
+		"action": "DoNothing",
+        "template": [
+            "Terminal.png",
+            "TerminalDark.png",
+            "TerminalSami.png"
+        ],
+		"next": [
+			"Home",
+			"StartUpBegin"
+		],
+		"postDelay_Doc": "等待以防万一（StartUp还有双倍的任务延迟等待，默认0.5s x2",
+		"postDelay": 1000
+	},
+    "StartWithSanity": {
+        "roi": [
+            700,
+            130,
+            140,
+            120
+        ],
+        "maskRange": [
+            100,
+            255
+        ],
+        "next": [
+            "CloseHomeSanity"
+        ]
+    },
+    "CloseHomeSanity": {
+        "action": "ClickSelf",
+        "roi": [
+            750,
+            610,
+            140,
+            70
+        ],
+        "next": [
+            "Home"
+        ]
+    },
     "StartUp": {
         "template": [
             "Terminal.png",
@@ -3434,25 +3480,19 @@
     "ReturnButtons": {
         "algorithm": "JustReturn",
         "next": [
-            "BlackReturn",
-            "WhiteReturn",
+            "ReturnButton",
             "FromStageSN"
         ]
     },
-    "WhiteReturn": {
-        "template": "Return-White.png",
-        "templThreshold": 0.8,
-        "baseTask": "BlackReturn",
-        "roi": [
-            0,
-            0,
-            220,
-            150
-        ]
-    },
-    "BlackReturn": {
-        "template": "Return.png",
-        "templThreshold": 0.7,
+    "ReturnButton": {
+        "template": [
+            "Return.png",
+            "Return-White.png"
+        ],
+        "templThreshold": [
+            0.7,
+            0.8
+        ],
         "action": "ClickSelf",
         "cache": false,
         "roi": [
@@ -3465,8 +3505,8 @@
             "#back",
             "ReturnButtons#next",
             "ReturnConfirm",
-            "BlackReturn@LoadingIcon",
-            "BlackReturn@LoadingText",
+            "ReturnButton@LoadingIcon",
+            "ReturnButton@LoadingText",
             "CloseAnnos#next"
         ]
     },
@@ -3487,7 +3527,7 @@
             35
         ],
         "next": [
-            "BlackReturn"
+            "ReturnButton"
         ]
     },
     "ReturnConfirm": {
@@ -3816,7 +3856,8 @@
         "next": [
             "PRTS1",
             "PRTS2",
-            "PRTS3"
+            "PRTS3",
+            "FightMissionFailed"
         ]
     },
     "PRTS1": {
@@ -4848,7 +4889,6 @@
         "postDelay": 2000
     },
     "MailWithoutAward": {
-        "action": "DoNothing",
         "cache": false,
         "roi": [
             120,
@@ -4856,11 +4896,8 @@
             150,
             135
         ],
-        "postDelay": 500,
-        "next": [
-            "Mail",
-            "Stop"
-        ]
+        "templThreshold": 0.9,
+        "postDelay": 500
     },
     "ReceiveMail": {
         "action": "ClickSelf",
@@ -4883,7 +4920,7 @@
     "CloseTaskMailDouble": {
         "baseTask": "CloseTaskAwardDouble",
         "next": [
-            "WhiteReturn",
+            "Home@ReturnButtons#next",
             "CloseTaskMailDouble"
         ]
     },
@@ -5270,6 +5307,15 @@
             "RecruitRefreshConfirm"
         ]
     },
+    "RecruitNoPermit": {
+        "action": "DoNothing",
+        "roi": [
+            450,
+            600,
+            190,
+            110
+        ]
+    },
     "RecruitNoRefresh": {
         "action": "DoNothing",
         "roi": [
@@ -5370,17 +5416,14 @@
             "Infrast@OfflineConfirm"
         ]
     },
-    "Infrast@WhiteReturn": {
-        "template": "Return-White.png",
-        "next": [
-            "Infrast@BlackReturn#next"
-        ]
-    },
-    "Infrast@BlackReturn": {
-        "template": "Return.png",
+    "Infrast@ReturnButton": {
+        "template": [
+            "Return.png",
+            "Return-White.png"
+        ],
         "next": [
             "InfrastBegin#next",
-            "Infrast@(BlackReturn#next)"
+            "Infrast@(ReturnButton#next)"
         ]
     },
     "Infrast@ReturnConfirm": {
@@ -7351,7 +7394,14 @@
             107,
             20
         ],
-        "postDelay": 200
+        "postDelay": 200,
+        "specialParams_Doc": "USED FOR YOSTAREN. Used in BattleFormationTask.cpp for OCR manipulation. For CN: OCRerConfig.h default values are used.",
+        "specialParams": [
+            140,
+            2,
+            0,
+            0
+        ]
     },
     "BattleQuickFormationSkill1": {
         "algorithm": "JustReturn",
@@ -7445,17 +7495,49 @@
             255
         ]
     },
+    "SkipBattlePlot": {
+        "baseTask": "SkipThePreBattlePlot",
+        "template": "SkipThePreBattlePlot.png",
+        "next": [
+            "SkipBattlePlotConfirm"
+        ]
+    },
     "SkipThePreBattlePlotConfirm": {
         "action": "ClickSelf",
         "roi": [
             721,
-            390,
+            290,
             149,
-            144
+            244
         ],
         "maskRange": [
             100,
             255
+        ]
+    },
+    "SkipBattlePlotConfirm": {
+        "baseTask": "SkipThePreBattlePlotConfirm",
+        "template": "SkipThePreBattlePlotConfirm.png",
+        "next": [
+            "EndOfPlot"
+        ]
+    },
+    "EndOfPlot": {
+        "roi": [
+            520,
+            0,
+            243,
+            206
+        ],
+        "action": "ClickRect",
+        "specificRect": [
+            1000,
+            120,
+            270,
+            10
+        ],
+        "next": [
+            "ClickStageName"
         ]
     },
     "SkipForbiddenOperConfirm": {
@@ -7522,6 +7604,19 @@
             153
         ],
         "postDelay": 2000
+    },
+    "BattleStartPlot": {
+        "roi": [
+            872,
+            250,
+            212,
+            255
+        ],
+        "postDelay": 2000,
+        "action": "ClickSelf",
+        "next": [
+            "SkipBattlePlot"
+        ]
     },
     "BattleOperName": {
         "algorithm": "OcrDetect",
@@ -9331,20 +9426,17 @@
             60
         ]
     },
-    "Roguelike@WhiteReturn": {
-        "template": "Return-White.png",
-        "next": [
-            "Roguelike@BlackReturn#next"
-        ]
-    },
-    "Roguelike@BlackReturn": {
-        "template": "Return.png",
+    "Roguelike@ReturnButton": {
+        "template": [
+            "Return.png",
+            "Return-White.png"
+        ],
         "next": [
             "Roguelike@ChooseDifficulty",
             "Roguelike@StartExplore",
             "Roguelike@ExitThenAbandon",
             "Roguelike@Abandon",
-            "Roguelike@(BlackReturn#next)"
+            "Roguelike@(ReturnButton#next)"
         ]
     },
     "Roguelike@RolesConfirm": {
@@ -13524,6 +13616,26 @@
             163
         ]
     },
+    "Copilot@StageNavigationSlowlySwipeLeft": {
+        "doc": "禁掉copilot的找不到关卡返回",
+        "exceededNext": [
+            "Copilot@ChapterSwipeToTheRightAndPlot"
+        ]
+    },
+    "Copilot@ChapterSwipeToTheRightAndPlot": {
+        "doc": "划五次到最右，然后扫有无初见剧情",
+        "baseTask": "ChapterSwipeToTheRight",
+        "exceededNext": [
+            "Copilot@ClickPlotStage"
+        ]
+    },
+    "ClickPlotStage": {
+        "action": "ClickSelf",
+        "next": [
+            "BattleStartPlot"
+        ],
+        "maxTimes": 1
+    },
     "Copilot@ClickCornerUntilEndOfAction": {
         "algorithm": "JustReturn",
         "action": "DoNothing",
@@ -13771,17 +13883,14 @@
         "templThreshold": 0.7,
         "action": "ClickSelf",
         "next": [
-            "Reclamation@BlackReturn#next"
+            "Reclamation@ReturnButton#next"
         ]
     },
-    "Reclamation@WhiteReturn": {
-        "template": "Return-White.png",
-        "next": [
-            "Reclamation@BlackReturn#next"
-        ]
-    },
-    "Reclamation@BlackReturn": {
-        "template": "Return.png",
+    "Reclamation@ReturnButton": {
+        "template": [
+            "Return.png",
+            "Return-White.png"
+        ],
         "next": [
             "Reclamation@AtHomePageFlag",
             "Reclamation@LevelForceExitConfirm",
@@ -13790,7 +13899,7 @@
             "Reclamation@ExitAlgorithm",
             "Reclamation@SmallReturn",
             "Reclamation@ReturnInFocus",
-            "Reclamation@(BlackReturn#next)"
+            "Reclamation@(ReturnButton#next)"
         ]
     },
     "Reclamation@ReturnInFocus": {
@@ -13803,7 +13912,7 @@
         "templThreshold": 0.7,
         "action": "ClickSelf",
         "next": [
-            "Reclamation@BlackReturn#next"
+            "Reclamation@ReturnButton#next"
         ]
     },
     "Reclamation@Begin": {
@@ -13812,7 +13921,7 @@
             "Reclamation@GiveupAlgorithm",
             "Reclamation@StartAlgorithm",
             "Reclamation@ConfirmStart#next",
-            "Reclamation@BlackReturn#next",
+            "Reclamation@ReturnButton#next",
             "Reclamation@BattleStart#next",
             "Reclamation@LevelComplete",
             "Reclamation@GiveupReportSkip",
@@ -14169,13 +14278,13 @@
         "next": [
             "Reclamation@LevelForceExitConfirm",
             "Reclamation@LevelForceExit",
-            "Reclamation@BlackReturn#next"
+            "Reclamation@ReturnButton#next"
         ]
     },
     "Reclamation@LevelForceExitConfirm": {
         "baseTask": "Reclamation@ExitLevelConfirm",
         "next": [
-            "Reclamation@BlackReturn#next"
+            "Reclamation@ReturnButton#next"
         ]
     },
     "Reclamation@LevelComplete": {
@@ -14669,7 +14778,7 @@
         "algorithm": "JustReturn",
         "next": [
             "NavigateHome@Reclamation@AtHomePageFlag",
-            "NavigateHome@Reclamation@BlackReturn#next",
+            "NavigateHome@Reclamation@ReturnButton#next",
             "NavigateHome@Reclamation@SkipAnnounce",
             "NavigateHome@Reclamation@SkipDailyReport",
             "NavigateHome@Reclamation@LevelComplete",
