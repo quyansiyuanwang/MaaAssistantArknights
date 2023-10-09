@@ -3148,19 +3148,16 @@
         ]
     },
     "StageDrops-Quantity": {
-        "maskRange": [
-            200,
-            255
-        ],
         "roi": [
             62,
             90,
             46,
             22
         ],
-        "templThreshold": 3,
-        "templThreshold_Doc": "这里用来作为字间距阈值",
-        "template": "empty.png"
+        "maskRange": [
+            200,
+            255
+        ]
     },
     "Roguelike@FromIntegratedStrategies": {
         "text": [

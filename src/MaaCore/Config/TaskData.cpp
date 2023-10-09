@@ -480,13 +480,15 @@ asst::TaskData::taskptr_t asst::TaskData::generate_task_info(std::string_view na
 asst::TaskData::taskptr_t asst::TaskData::generate_match_task_info(std::string_view name, const json::value& task_json,
                                                                    std::shared_ptr<MatchTaskInfo> default_ptr)
 {
+    auto match_task_info_ptr = std::make_shared<MatchTaskInfo>();
+    if (!get_value_or(name, task_json, "template", match_task_info_ptr->templ_names, [&]() {
+            // 这里只要 default_ptr 不为空就一定是 BaseTask 或 TemplateTask，反之则一定是普通任务
+            return default_ptr ? default_ptr->templ_names : std::vector { (std::string(name) + ".png") };
+        })) {
+        return nullptr;
+    }
     if (default_ptr == nullptr) {
         default_ptr = default_match_task_info_ptr;
-    }
-    auto match_task_info_ptr = std::make_shared<MatchTaskInfo>();
-    if (!get_value_or(name, task_json, "template", match_task_info_ptr->templ_names,
-                      [&]() { return std::vector { std::string(name) + ".png" }; })) {
-        return nullptr;
     }
 
     m_templ_required.insert(match_task_info_ptr->templ_names.begin(), match_task_info_ptr->templ_names.end());
